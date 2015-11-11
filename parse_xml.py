@@ -8,9 +8,6 @@ infile = STATIC_PATH+'/datasets/Users.xml'
 
 # context = etree.iterparse(infile, events=('end',), tag='DisplayName')
 context = etree.iterparse(infile)
-ct = 0
-
-
 
 def parse_block(elem):
     print("printing elem")
