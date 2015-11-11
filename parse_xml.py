@@ -12,7 +12,7 @@ ct = 0
 def parse_block(elem):
     print("printing elem")
     print(elem.tag)
-    print elem.tag, elem.attrib['DownVotes']
+    print elem.tag, elem.attribute['DownVotes']
     for thing in elem:
         print(thing)
     print("")
