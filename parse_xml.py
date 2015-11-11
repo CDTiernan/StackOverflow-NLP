@@ -1,8 +1,11 @@
 # import importer as etree
 from lxml import etree
+import os
 
-# PATH MUST BE CHANGED for each users
-infile = '/Users/Matt/Desktop/stackexchange/Users.xml'
+# DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
+STATIC_PATH = os.getcwd()
+infile = STATIC_PATH+'/datasets/Users.xml'
+
 # context = etree.iterparse(infile, events=('end',), tag='DisplayName')
 context = etree.iterparse(infile)
 ct = 0
@@ -22,12 +25,13 @@ def fast_iter(context):
     print("starting fast iterator")
     print("printing context...")
     print(context)
-    for event, elem in context: 
+
+    for event, elem in context:
         if(ct > 10):
             break
         print("count is %d" % ct)
         ct += 1
-        
+
         print("about to call parse_block")       
         parse_block(elem)
         elem.clear()
