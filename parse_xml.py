@@ -12,7 +12,7 @@ context = etree.iterparse(infile)
 def parse_block(elem):
     # print("printing elem")
     # print(elem.tag)
-    # print elem.tag, elem.attrib['DownVotes']
+    # print elem.tag, elem.attrib['DownVotes'
     for key,value in elem.attrib.iteritems():
         print "%s    %s" % (key,value)
     print("")
