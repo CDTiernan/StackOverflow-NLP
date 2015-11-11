@@ -1,4 +1,4 @@
-import importer
+import importer as etree
 
 # PATH MUST BE CHANGED for each users
 infile = '/Users/Matt/Desktop/stackexchange/Users.xml'
