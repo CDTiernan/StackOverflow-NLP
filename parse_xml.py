@@ -13,7 +13,11 @@ ct = 0
 
 
 def parse_block(elem):
-    print(elem)
+    print("printing elem")
+    print(elem.tag)
+    print elem.tag, elem.attrib['DownVotes']
+    for thing in elem:
+        print(thing)
     print("")
 
 def fast_iter(context):
@@ -21,10 +25,14 @@ def fast_iter(context):
     print("starting fast iterator")
     print("printing context...")
     print(context)
+
     for event, elem in context:
+        if(ct > 10):
+            break
         print("count is %d" % ct)
         ct += 1
-        print("about to call parse_block")
+
+        print("about to call parse_block")       
         parse_block(elem)
         elem.clear()
         while elem.getprevious() is not None:
