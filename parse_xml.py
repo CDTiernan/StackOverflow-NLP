@@ -1,7 +1,7 @@
 from lxml import etree
 
 # PATH MUST BE CHANGED for each users
-infile = '/Users//Users/Matt/Desktop/stackexchange/Users.xml'
+infile = '/Users/Matt/Desktop/stackexchange/Users.xml'
 context = etree.iterparse(infile, events=('end',), tag='Title')
 
 ct = 0
