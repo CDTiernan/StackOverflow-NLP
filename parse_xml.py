@@ -30,6 +30,7 @@ def fast_iter(context):
         ct += 1
 
         #print("about to call parse_block")
+        print "--------------------- PARSING %i ROW ---------------------" % (ct)
         parse_block(elem)
         elem.clear()
         while elem.getprevious() is not None:
