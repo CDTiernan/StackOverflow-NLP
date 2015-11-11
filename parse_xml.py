@@ -4,10 +4,11 @@ import os
 
 # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
 STATIC_PATH = os.getcwd()
-infile = STATIC_PATH+'/datasets/Users.xml'
+users = STATIC_PATH+'/datasets/Users.xml'
+posts = STATIC_PATH+'/datasets/Posts.xml'
 
 # context = etree.iterparse(infile, events=('end',), tag='DisplayName')
-context = etree.iterparse(infile)
+context = etree.iterparse(posts)
 
 def parse_block(elem):
     for key,value in elem.attrib.iteritems():
@@ -17,7 +18,7 @@ def parse_block(elem):
 def fast_iter(context):
     ct = 0
     for event, elem in context:
-        if(ct > 10):
+        if(ct > 100):
             break
         ct += 1
 
