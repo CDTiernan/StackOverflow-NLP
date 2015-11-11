@@ -1,4 +1,4 @@
-from lxml import etree
+import importer
 
 # PATH MUST BE CHANGED for each users
 infile = '/Users//Users/Matt/Desktop/stackexchange/Users.xml'
