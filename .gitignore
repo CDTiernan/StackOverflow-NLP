@@ -1,2 +1,5 @@
 # Python compiled files
 *.pyc
+
+# dataset folder with huge files
+datasets/*
