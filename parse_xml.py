@@ -21,11 +21,8 @@ def fast_iter(context):
             break
         ct += 1
 
-<<<<<<< HEAD
         #print("about to call parse_block")
         print "--------------------- PARSING %i ROW ---------------------" % (ct)
-=======
->>>>>>> c6c1d4c4e64e90bc5d194b1a5f903900bc729337
         parse_block(elem)
         elem.clear()
         while elem.getprevious() is not None:
