@@ -2,6 +2,7 @@
 from lxml import etree
 import os
 from collections import defaultdict
+import pprint
 
 # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
 STATIC_PATH = os.getcwd()
@@ -11,37 +12,55 @@ posts = STATIC_PATH+'/datasets/Posts.xml'
 # context = etree.iterparse(infile, events=('end',), tag='DisplayName')
 context = etree.iterparse(posts)
 
-def parse_block(elem, d):
-    isQuestion = elem.attrib['PostTypeId'] == "1"
-    if isQuestion:
+def get_question(elem, d):
+    is_question = elem.attrib['PostTypeId'] is "1"
+    if is_question:
         id = elem.attrib['Id']
         d[id] = 1
+        
+def get_answer(elem, d):
+    is_answer = elem.attrib['PostTypeId'] is "2"
+    if is_answer:
+        for question in d.iteritems():
+            if question is elem.attrib['ParentId']:
+                print("adding answer")
+                # current elem is answer to this question
+                answer_id = elem.attrib['Id']
+                d[question][answer_id] = elem.attrib
+            
         
     # for key,value in elem.attrib.iteritems():
         # print "%s    %s" % (key,value)
 
-def fast_iter(context):
+def fast_iter(context, func, d, limit=None):
     ct = 0
-    d = defaultdict(lambda: defaultdict(int))
+    has_limit = limit is not None
     
     for event, elem in context:
-        # if(ct > 10000):
-            # break
+        if has_limit:
+            if ct > limit:
+                break
         ct += 1
-        if ct % 1000000 == 0:
-            print("at ct: %d" % ct)
 
         # print "--------------------- PARSING %i ROW ---------------------" % (ct)
-        parse_block(elem, d)
+        func(elem, d)
         elem.clear()
         while elem.getprevious() is not None:
             del elem.getparent()[0]
     del context
     return d
 
-questions_dict = fast_iter(context)
-for question_id in questions_dict.iteritems():
-    print(question_id)
+
+
+questions_dict = defaultdict(int)
+print("getting questions...")
+fast_iter(context, get_question, questions_dict, limit=10)
+print("number of questions: %d" % len(questions_dict))
+
+
+print("getting answers...")
+fast_iter(context, get_answer, questions_dict)
+
     
 print("")
-print("number of questions: %d" % len(questions_dict))
+pprint.pprint(questions_dict)
