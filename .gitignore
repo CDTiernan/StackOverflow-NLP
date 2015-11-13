@@ -6,3 +6,6 @@ datasets/*
 
 # pickle dumps
 *.p
+
+#database
+db/*
