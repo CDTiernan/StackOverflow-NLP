@@ -17,9 +17,19 @@ def create_db_if_needed():
     ''' CREATE DATABASE '''
     if not os.path.exists(database):
         # db doesn't exist
+
         # connect to db (which creates it)
-        # create questions table: create table questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int);
-        # create answers table: create table answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean);
+        connection = sqlite3.connect('db/datadump.db')
+        cursor = connection.cursor()
+
+        # create questions table
+        cursor.execute("CREATE TABLE questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
+
+        # create answers table
+        cursor.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
+
+        connection.commit()
+        connection.close()
 
 
 def get_question(elem, c):
@@ -117,7 +127,8 @@ answers_dict = defaultdict(dd) # dd is a module-level function
 '''
 
 if __name__=='__main__':
-
+    create_db_if_needed()
+    context = etree.iterparse(posts)
     conn = sqlite3.connect('db/datadump.db')
 
     print("getting questions...")
