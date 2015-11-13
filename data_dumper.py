@@ -5,6 +5,7 @@ from collections import defaultdict
 import pprint
 import pickle
 import sqlite3
+import unicodedata
 
 # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
 STATIC_PATH = os.getcwd()
@@ -17,15 +18,17 @@ def get_question(elem, c):
 
     if is_question and has_accepted_answer:
         q_id = int(elem.attrib['Id'])
-        title = str(elem.attrib['Title'])
-        body = str(elem.attrib['Body'])
+        # tilte unicodedata.normalize('NFKD', elem.attrib['Title']).encode('ascii','ignore')
+        title = elem.attrib['Title'].encode('ascii','ignore')
+        # tilte unicodedata.normalize('NFKD', elem.attrib['Body']).encode('ascii','ignore')
+        body = elem.attrib['Body'].encode('ascii','ignore')
         score = int(elem.attrib['Score'])
         views = int(elem.attrib['ViewCount'])
         accepted_answer_id = int(elem.attrib['AcceptedAnswerId'])
 
         q_cur = c.cursor()
 
-        q_cur.execute("INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (1, 'f', 'd', 2, 3, 4)")
+        q_cur.execute('INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
         #q_cur.execute("INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (%i, %s, %s, %i, %i, %i)" % (q_id, title, body, score, views, accepted_answer_id))
         c.commit()
 
@@ -43,14 +46,14 @@ def get_answer(elem, c):
 
     if is_answer:
         a_id = int(elem.attrib['Id'])
-        body = str(elem.attrib['Body'])
-        score = str(elem.attrib['Score'])
+        body = str(elem.attrib['Body']).encode('ascii','ignore')
+        score = int(elem.attrib['Score'])
         q_id = int(elem.attrib['ParentId'])
 
 
         a_cur = c.cursor()
 
-        a_cur.execute("INSERT INTO answers (id, body, score, pid) VALUES (%i, %s, %i, %i)" % (a_id, body, score, q_id))
+        a_cur.execute('INSERT INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
         c.commit()
 
 
@@ -106,12 +109,16 @@ answers_dict = defaultdict(dd) # dd is a module-level function
 conn = sqlite3.connect('db/datadump.db')
 
 print("getting questions...")
-fast_iter(context, get_question, conn, limit=10)
+fast_iter(context, get_question, conn, limit=None)
 # fast_iter(context, get_question, questions_dict, limit=None)
 # print("number of questions: %d" % len(questions_dict))
 
 print("getting answers...")
-fast_iter(context, get_answer,  conn, limit=10)
+fast_iter(context, get_answer,  conn, limit=None)
+
+cur = c.cursor()
+cur.execute('SELECT count(id) from questions')
+
 # fast_iter(context, get_answer, answers_dict, limit=None)
 # print("number of answers pre-deleting unused: %d" % len(answers_dict))
 
@@ -124,3 +131,5 @@ fast_iter(context, get_answer,  conn, limit=10)
 
 # print("")
 # pprint.pprint(questions_dict)
+
+conn.close()
