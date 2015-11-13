@@ -27,6 +27,7 @@ def get_answer(elem, d):
                 # current elem is answer to this question
                 answer_id = elem.attrib['Id']
                 d[question][answer_id] = elem.attrib
+                break
             
         
     # for key,value in elem.attrib.iteritems():
@@ -54,7 +55,7 @@ def fast_iter(context, func, d, limit=None):
 
 questions_dict = defaultdict(int)
 print("getting questions...")
-fast_iter(context, get_question, questions_dict, limit=10)
+fast_iter(context, get_question, questions_dict, limit=2)
 print("number of questions: %d" % len(questions_dict))
 
 
