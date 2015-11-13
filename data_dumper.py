@@ -41,25 +41,6 @@ def get_answer(elem, d):
         d[a_id]["body"] = body
         d[a_id]["score"] = score
         d[a_id]["parent_id"] = q_id
-    '''
-    is_answer = elem.attrib['PostTypeId'] is "2"
-    if is_answer:
-        q_id = elem.attrib['ParentId']
-        #print q_id
-        is_answer_to_question = q_id in d
-        if is_answer_to_question:
-            a_id = elem.attrib['Id']
-            d[q_id]["answers_ids"].append(a_id)
-
-
-        for question in d.iteritems():
-            if question is elem.attrib['ParentId']:
-                print("adding answer")
-                # current elem is answer to this question
-                answer_id = elem.attrib['Id']
-                d[question][answer_id] = elem.attrib
-                break
-        '''
 
 def fast_iter(context, func, d, limit=None):
     ct = 0
@@ -70,7 +51,8 @@ def fast_iter(context, func, d, limit=None):
             if ct > limit:
                 break
         ct += 1
-        #print ct
+        if ct % 100000 == 0:
+            print "completed %i rows." % (ct)
         func(elem, d)
         elem.clear()
 
@@ -79,12 +61,21 @@ def fast_iter(context, func, d, limit=None):
     del context
 
 def link_dicts(qd,ad):
+    answers_with_no_question = []
     for a_id,info_dict in ad.iteritems():
         q_id = info_dict["parent_id"]
         if q_id in qd:
             qd[q_id]["answers_ids"].append(a_id)
             if qd[q_id]["accepted_answer_id"] == a_id:
                 ad[a_id]["is_accepted"] = 1
+        else:
+            answers_with_no_question.append(a_id)
+
+    return answers_with_no_question
+
+def delete_unused_answers(td,ad):
+    for a_id in td:
+        del ad[a_id]
 
 context = etree.iterparse(posts)
 
@@ -94,14 +85,16 @@ questions_dict = defaultdict(dd) # dd is a module-level function
 answers_dict = defaultdict(dd) # dd is a module-level function
 
 print("getting questions...")
-fast_iter(context, get_question, questions_dict, limit=1000000)
+fast_iter(context, get_question, questions_dict, limit=None)
 print("number of questions: %d" % len(questions_dict))
 
 print("getting answers...")
-fast_iter(context, get_answer, answers_dict, limit=1000000)
-print("number of answers: %d" % len(answers_dict))
+fast_iter(context, get_answer, answers_dict, limit=None)
+print("number of answers pre-deleting unused: %d" % len(answers_dict))
 
-link_dicts(questions_dict,answers_dict)
+to_del = link_dicts(questions_dict,answers_dict)
+delete_unused_answers(to_del,answers_dict)
+print("number of post-answers unused: %d" % len(answers_dict))
 
 pickle.dump( questions_dict, open( "questions.p", "wb" ) )
 pickle.dump( answers_dict, open( "answers.p", "wb" ) )
