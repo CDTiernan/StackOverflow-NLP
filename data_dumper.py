@@ -1,14 +1,26 @@
 # import importer as etree
 from lxml import etree
 import os
-from collections import defaultdict
-import pprint
-import pickle
+# from collections import defaultdict
+# import pprint
+# import pickle
+import sqlite3
 
 # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
 STATIC_PATH = os.getcwd()
 users = STATIC_PATH+'/datasets/Users.xml'
 posts = STATIC_PATH+'/datasets/Posts.xml'
+database = STATIC_PATH+'/db/datadump.db'
+
+
+def create_db_if_needed():
+    ''' CREATE DATABASE '''
+    if not os.path.exists(database):
+        # db doesn't exist
+        # connect to db (which creates it)
+        # create questions table: create table questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int);
+        # create answers table: create table answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean);
+
 
 def get_question(elem, d):
     is_question = elem.attrib['PostTypeId'] is "1"
@@ -73,31 +85,40 @@ def link_dicts(qd,ad):
 
     return answers_with_no_question
 
+
 def delete_unused_answers(td,ad):
     for a_id in td:
         del ad[a_id]
 
-context = etree.iterparse(posts)
 
+''' creates defaultdict '''
 def dd():
     return defaultdict(int)
-questions_dict = defaultdict(dd) # dd is a module-level function
-answers_dict = defaultdict(dd) # dd is a module-level function
 
-print("getting questions...")
-fast_iter(context, get_question, questions_dict, limit=None)
-print("number of questions: %d" % len(questions_dict))
 
-print("getting answers...")
-fast_iter(context, get_answer, answers_dict, limit=None)
-print("number of answers pre-deleting unused: %d" % len(answers_dict))
 
-to_del = link_dicts(questions_dict,answers_dict)
-delete_unused_answers(to_del,answers_dict)
-print("number of post-answers unused: %d" % len(answers_dict))
 
-pickle.dump( questions_dict, open( "questions.p", "wb" ) )
-pickle.dump( answers_dict, open( "answers.p", "wb" ) )
+if __name__=='__main__':
+    create_db_if_needed()
+    context = etree.iterparse(posts)
 
-# print("")
-# pprint.pprint(questions_dict)
+    questions_dict = defaultdict(dd) # dd is a module-level function
+    answers_dict = defaultdict(dd) # dd is a module-level function
+
+    print("getting questions...")
+    fast_iter(context, get_question, questions_dict, limit=None)
+    print("number of questions: %d" % len(questions_dict))
+
+    print("getting answers...")
+    fast_iter(context, get_answer, answers_dict, limit=None)
+    print("number of answers pre-deleting unused: %d" % len(answers_dict))
+
+    to_del = link_dicts(questions_dict,answers_dict)
+    delete_unused_answers(to_del,answers_dict)
+    print("number of post-answers unused: %d" % len(answers_dict))
+
+    pickle.dump( questions_dict, open( "questions.p", "wb" ) )
+    pickle.dump( answers_dict, open( "answers.p", "wb" ) )
+
+    # print("")
+    # pprint.pprint(questions_dict)
