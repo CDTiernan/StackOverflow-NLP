@@ -62,8 +62,37 @@ def get_answer(elem, c):
         d[a_id]["score"] = score
         d[a_id]["parent_id"] = q_id
         '''
+def populate_questions_answers_tables(elem, c):
 
-def fast_iter(context, func, c, limit=None):
+    is_question = elem.attrib['PostTypeId'] is "1"
+    has_accepted_answer = 'AcceptedAnswerId' in elem.attrib
+    if is_question and has_accepted_answer:
+        q_id = int(elem.attrib['Id'])
+        title = elem.attrib['Title'].encode('ascii','ignore')
+        body = elem.attrib['Body'].encode('ascii','ignore')
+        score = int(elem.attrib['Score'])
+        views = int(elem.attrib['ViewCount'])
+        accepted_answer_id = int(elem.attrib['AcceptedAnswerId'])
+
+        q_cur = c.cursor()
+
+        q_cur.execute('INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
+        c.commit()
+
+
+    is_answer = elem.attrib['PostTypeId'] is "2"
+    if is_answer:
+        a_id = int(elem.attrib['Id'])
+        body = elem.attrib['Body'].encode('ascii','ignore')
+        score = int(elem.attrib['Score'])
+        q_id = int(elem.attrib['ParentId'])
+
+        a_cur = c.cursor()
+
+        a_cur.execute('INSERT INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
+        c.commit()
+
+def fast_iter(context, c, limit=None):
     ct = 0
     has_limit = limit is not None
 
@@ -71,16 +100,18 @@ def fast_iter(context, func, c, limit=None):
         if has_limit:
             if ct > limit:
                 break
-        ct += 1
-        if ct % 100000 == 0:
+        if ct % 50000 == 0:
             print "completed %i rows." % (ct)
-        func(elem,c)
+        # func(elem,c)
+        populate_questions_answers_tables(elem, c)
+        ct += 1
+
         elem.clear()
 
         while elem.getprevious() is not None:
             del elem.getparent()[0]
     del context
-
+'''
 def link_dicts(qd,ad):
     answers_with_no_question = []
     for a_id,info_dict in ad.iteritems():
@@ -97,6 +128,7 @@ def link_dicts(qd,ad):
 def delete_unused_answers(td,ad):
     for a_id in td:
         del ad[a_id]
+'''
 
 context = etree.iterparse(posts)
 
@@ -108,16 +140,16 @@ answers_dict = defaultdict(dd) # dd is a module-level function
 '''
 conn = sqlite3.connect('db/datadump.db')
 
-print("getting questions...")
-fast_iter(context, get_question, conn, limit=None)
+print("populating questions and answers...")
+fast_iter(context, conn, limit=None)
 # fast_iter(context, get_question, questions_dict, limit=None)
 # print("number of questions: %d" % len(questions_dict))
 
-print("getting answers...")
-fast_iter(context, get_answer,  conn, limit=None)
+# print("getting answers...")
+# fast_iter(context, get_answer,  conn, limit=None)
 
-cur = c.cursor()
-cur.execute('SELECT count(id) from questions')
+# cur = c.cursor()
+# cur.execute('SELECT count(id) from questions')
 
 # fast_iter(context, get_answer, answers_dict, limit=None)
 # print("number of answers pre-deleting unused: %d" % len(answers_dict))
