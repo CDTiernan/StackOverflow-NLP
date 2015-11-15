@@ -4,8 +4,8 @@
 # dataset folder with huge files
 datasets/*
 
+# database
+db/*
+
 # pickle dumps
 *.p
-
-# database
-db/*.db
