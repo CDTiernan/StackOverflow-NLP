@@ -1,6 +1,7 @@
 from lxml import etree
 import os
 import sqlite3
+import db_tools
 
 def populate_questions_answers_tables(elem, c):
 
@@ -39,7 +40,7 @@ def fast_iter(context, c, limit=None):
                 break
 
         if ct % 50000 == 0:
-            print "completed %i rows." % (ct)
+            print("completed %i rows." % (ct))
 
         populate_questions_answers_tables(elem, c)
         ct += 1
@@ -49,23 +50,6 @@ def fast_iter(context, c, limit=None):
         while elem.getprevious() is not None:
             del elem.getparent()[0]
 
-def create_db(c):
-        # connect to db (which creates it)
-        cur = c.cursor()
-
-        # create questions table
-        cur.execute("CREATE TABLE questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
-        # add indecies
-        cur.execute("CREATE INDEX qid_idx ON questions(id)")
-        cur.execute("CREATE INDEX acceptedanswerid_idx ON questions(acceptedanswerid)")
-        # create answers table
-        cur.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
-        # add indecies
-        cur.execute("CREATE INDEX aid_idx ON answers(id)");
-        cur.execute("CREATE INDEX pid_idx ON answers(pid)");
-        cur.execute("CREATE INDEX isacceptedanswer_idx ON answers(acceptedanswer)");
-
-        c.commit()
 
 if __name__=='__main__':
     # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
@@ -73,20 +57,14 @@ if __name__=='__main__':
     users = static_path+'/datasets/Users.xml'
     posts = static_path+'/datasets/Posts.xml'
 
-    # check to see if database exists
-    have_db = os.path.isfile('db/datadump.db')
-
     # connect to the dataset
     context = etree.iterparse(posts)
-    # connect to the database (and create it)
-    connection = sqlite3.connect('db/datadump.db')
 
-    # if db does not exist
-    if not have_db:
-        print("Creating and Connecting to DB")
-        create_db(connection)
-    else:
-        print("Connecting to DB")
+    # connect to the database
+    print("Connecting to DB")
+    connection = db_tools.get_connection()
+
+
 
     print("Populating DB")
     fast_iter(context, connection, limit=1000)
