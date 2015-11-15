@@ -62,7 +62,7 @@ def create_db(c):
         cur.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
         # add indecies
         cur.execute("CREATE INDEX aid_idx ON answers(id)");
-        cur.execute("CREATE INDEX pid_idx ON answers(id)");
+        cur.execute("CREATE INDEX pid_idx ON answers(pid)");
         cur.execute("CREATE INDEX isacceptedanswer_idx ON answers(acceptedanswer)");
 
         c.commit()
@@ -70,7 +70,6 @@ def create_db(c):
 if __name__=='__main__':
     # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
     static_path = os.getcwd()
-
     users = static_path+'/datasets/Users.xml'
     posts = static_path+'/datasets/Posts.xml'
 
@@ -79,7 +78,7 @@ if __name__=='__main__':
 
     # connect to the dataset
     context = etree.iterparse(posts)
-    #connect to the database (and create it)
+    # connect to the database (and create it)
     connection = sqlite3.connect('db/datadump.db')
 
     # if db does not exist
