@@ -1,9 +1,9 @@
 # import importer as etree
 from lxml import etree
 import os
-from collections import defaultdict
-import pprint
-import pickle
+# from collections import defaultdict
+# import pprint
+# import pickle
 import sqlite3
 import unicodedata
 
@@ -11,6 +11,27 @@ import unicodedata
 STATIC_PATH = os.getcwd()
 users = STATIC_PATH+'/datasets/Users.xml'
 posts = STATIC_PATH+'/datasets/Posts.xml'
+database = STATIC_PATH+'/db/datadump.db'
+
+
+def create_db_if_needed():
+    ''' CREATE DATABASE '''
+    if not os.path.exists(database):
+        # db doesn't exist
+
+        # connect to db (which creates it)
+        connection = sqlite3.connect('db/datadump.db')
+        cursor = connection.cursor()
+
+        # create questions table
+        cursor.execute("CREATE TABLE questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
+
+        # create answers table
+        cursor.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
+
+        connection.commit()
+        connection.close()
+
 
 def get_question(elem, c):
     is_question = elem.attrib['PostTypeId'] is "1"
@@ -125,12 +146,13 @@ def link_dicts(qd,ad):
 
     return answers_with_no_question
 
+
 def delete_unused_answers(td,ad):
     for a_id in td:
         del ad[a_id]
 '''
 
-context = etree.iterparse(posts)
+
 
 '''
 def dd():
@@ -138,8 +160,8 @@ def dd():
 questions_dict = defaultdict(dd) # dd is a module-level function
 answers_dict = defaultdict(dd) # dd is a module-level function
 '''
-conn = sqlite3.connect('db/datadump.db')
 
+<<<<<<< HEAD
 print("populating questions and answers...")
 fast_iter(context, conn, limit=None)
 # fast_iter(context, get_question, questions_dict, limit=None)
@@ -154,13 +176,14 @@ fast_iter(context, conn, limit=None)
 # fast_iter(context, get_answer, answers_dict, limit=None)
 # print("number of answers pre-deleting unused: %d" % len(answers_dict))
 
-# to_del = link_dicts(questions_dict,answers_dict)
-# delete_unused_answers(to_del,answers_dict)
-# print("number of post-answers unused: %d" % len(answers_dict))
+    # to_del = link_dicts(questions_dict,answers_dict)
+    # delete_unused_answers(to_del,answers_dict)
+    # print("number of post-answers unused: %d" % len(answers_dict))
 
-# pickle.dump( questions_dict, open( "questions.p", "wb" ) )
-# pickle.dump( answers_dict, open( "answers.p", "wb" ) )
+    # pickle.dump( questions_dict, open( "questions.p", "wb" ) )
+    # pickle.dump( answers_dict, open( "answers.p", "wb" ) )
 
+<<<<<<< HEAD
 # print("")
 # pprint.pprint(questions_dict)
 

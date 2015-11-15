@@ -7,5 +7,10 @@ datasets/*
 # pickle dumps
 *.p
 
+<<<<<<< HEAD
 #database
 db/datadump.db
+=======
+# database
+db/*.db
+>>>>>>> 9c87d6a340e29c01998e5eb4a7cf84437b23645f
