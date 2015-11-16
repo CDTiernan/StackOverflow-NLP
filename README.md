@@ -4,10 +4,10 @@
 
 ## Overview
 #### Libraries Needed
-* nltk
-* textblob
-* sqlite3
-* lxml
+* ###### nltk
+* ###### textblob
+* ###### sqlite3
+* ###### lxml
 
 To download libaries with pip, run:
 ```
