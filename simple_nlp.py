@@ -6,6 +6,10 @@ to install, run the two commands below separately:
 
 pip install textblob
 python -m textblob.download_corpora
+
+
+link to tutorial:
+https://textblob.readthedocs.org/en/dev/quickstart.html#sentiment-analysis
 '''
 returns polarity of text between 0 and 1
 0 is most negative
