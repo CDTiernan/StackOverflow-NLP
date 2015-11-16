@@ -34,14 +34,30 @@ def setup_db():
 
     # QUESTIONS TABLE
     # create questions table if it's not there
-    cur.execute("CREATE TABLE IF NOT EXISTS questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
+    cur.execute("CREATE TABLE IF NOT EXISTS questions (" +
+                "id int, " +
+                "title string, " +
+                "body string, " +
+                "score int, " +
+                "views int, " +
+                "favorites int, " +
+                "comments int, " +
+                "acceptedanswerid int, " +
+                "PRIMARY KEY (id))")
     # add indices if they aren't there
     cur.execute("CREATE INDEX IF NOT EXISTS qid_idx ON questions(id)")
     cur.execute("CREATE INDEX IF NOT EXISTS acceptedanswerid_idx ON questions(acceptedanswerid)")
 
     # ANSWERS TABLE
     # create answers table if it's not there
-    cur.execute("CREATE TABLE IF NOT EXISTS answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
+    cur.execute("CREATE TABLE IF NOT EXISTS answers (" +
+                "id int, " +
+                "body string, " +
+                "score int, " +
+                "commentcount int, " +
+                "pid int, " +
+                "acceptedanswer boolean, " +
+                "PRIMARY KEY (id))")
     # add indices if they aren't there
     cur.execute("CREATE INDEX IF NOT EXISTS aid_idx ON answers(id)");
     cur.execute("CREATE INDEX IF NOT EXISTS pid_idx ON answers(pid)");

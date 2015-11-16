@@ -16,7 +16,7 @@ def populate_questions_answers_tables(elem, c):
         accepted_answer_id = int(elem.attrib['AcceptedAnswerId'])
 
         q_cur = c.cursor()
-        q_cur.execute('INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
+        q_cur.execute('INSERT OR IGNORE INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
         c.commit()
 
     is_answer = elem.attrib['PostTypeId'] is "2"
@@ -27,7 +27,7 @@ def populate_questions_answers_tables(elem, c):
         q_id = int(elem.attrib['ParentId'])
 
         a_cur = c.cursor()
-        a_cur.execute('INSERT INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
+        a_cur.execute('INSERT OR IGNORE INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
         c.commit()
 
 def fast_iter(context, c, limit=None):
