@@ -10,10 +10,10 @@
 * lxml
 
 To download libaries with pip, run:
-'''
+```
 $ pip install nltk textblob sqlite3 lxml
-'''
+```
 The textblob library also needs some data, which you can get by running:
-'''
+```
 $ python -m textblob.download_corpora
-'''
+```
