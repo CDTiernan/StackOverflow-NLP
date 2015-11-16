@@ -1,6 +1,12 @@
 from textblob import TextBlob
 
 '''
+textblob library needs to be installed for this to work
+to install, run the two commands below separately:
+
+pip install textblob
+python -m textblob.download_corpora
+'''
 returns polarity of text between 0 and 1
 0 is most negative
 1 is most positive
