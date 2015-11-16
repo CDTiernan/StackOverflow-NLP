@@ -1,9 +1,9 @@
 # Predicting Accepted Answers On StackOverflow
-### Final Project for CS 585: Natural Langauge Processing
-##### Authors: Matt McNally and Carter Tiernan
+#### Final Project for CS 585: Natural Langauge Processing
+###### Authors: Matt McNally and Carter Tiernan
 
 ## Overview
-### Libraries Needed
+#### Libraries Needed
 * nltk
 * textblob
 * sqlite3
