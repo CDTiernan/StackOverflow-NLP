@@ -14,7 +14,7 @@ https://textblob.readthedocs.org/en/dev/quickstart.html#sentiment-analysis
 returns polarity of text between 0 and 1
 0 is most negative
 1 is most positive
-'''
+
 def get_sentiment_polarity(text):
     blob = TextBlob(text)
     return blob.sentiment.polarity
