@@ -1,6 +1,7 @@
 from lxml import etree
 import os
 import sqlite3
+import db_tools
 
 def populate_questions_answers_tables(elem, c):
 
@@ -15,7 +16,7 @@ def populate_questions_answers_tables(elem, c):
         accepted_answer_id = int(elem.attrib['AcceptedAnswerId'])
 
         q_cur = c.cursor()
-        q_cur.execute('INSERT INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
+        q_cur.execute('INSERT OR IGNORE INTO questions (id, title, body, score, views, acceptedanswerid) VALUES (?, ?, ?, ?, ?, ?)', (q_id, title, body, score, views, accepted_answer_id))
         c.commit()
 
     is_answer = elem.attrib['PostTypeId'] is "2"
@@ -26,7 +27,7 @@ def populate_questions_answers_tables(elem, c):
         q_id = int(elem.attrib['ParentId'])
 
         a_cur = c.cursor()
-        a_cur.execute('INSERT INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
+        a_cur.execute('INSERT OR IGNORE INTO answers (id, body, score, pid) VALUES (?, ?, ?, ?)', (a_id, body, score, q_id))
         c.commit()
 
 def fast_iter(context, c, limit=None):
@@ -39,7 +40,7 @@ def fast_iter(context, c, limit=None):
                 break
 
         if ct % 50000 == 0:
-            print "completed %i rows." % (ct)
+            print("completed %i rows." % (ct))
 
         populate_questions_answers_tables(elem, c)
         ct += 1
@@ -49,45 +50,20 @@ def fast_iter(context, c, limit=None):
         while elem.getprevious() is not None:
             del elem.getparent()[0]
 
-def create_db(c):
-        # connect to db (which creates it)
-        cur = c.cursor()
-
-        # create questions table
-        cur.execute("CREATE TABLE questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
-        # add indecies
-
-        cur.execute("CREATE INDEX acceptedanswerid_idx ON questions(acceptedanswerid)")
-
-        # create answers table
-        cur.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
-        # add indecies
-        cur.execute("CREATE INDEX aid_idx ON answers(id)");
-        cur.execute("CREATE INDEX pid_idx ON answers(pid)");
-        cur.execute("CREATE INDEX isacceptedanswer_idx ON answers(acceptedanswer)");
-
-        c.commit()
-
 if __name__=='__main__':
     # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
     static_path = os.getcwd()
     users = static_path+'/datasets/Users.xml'
     posts = static_path+'/datasets/Posts.xml'
 
-    # check to see if database exists
-    have_db = os.path.isfile('db/datadump.db')
-
     # connect to the dataset
     context = etree.iterparse(posts)
-    #connect to the database (and create it)
-    connection = sqlite3.connect('db/datadump.db')
 
-    # if db does not exist
-    if not have_db:
-        print("Creating and Connecting to DB")
-        create_db(connection)
-    else:
-        print("Connecting to DB")
+    # connect to the database
+    print("Connecting to DB")
+    connection = db_tools.get_connection()
+
+
 
     print("Populating DB")
     fast_iter(context, connection, limit=10000)
