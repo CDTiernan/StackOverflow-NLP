@@ -56,13 +56,14 @@ def create_db(c):
         # create questions table
         cur.execute("CREATE TABLE questions (id int, title string, body string, score int, views int, favorites int, comments int, acceptedanswerid int)")
         # add indecies
-        cur.execute("CREATE INDEX qid_idx ON questions(id)")
+
         cur.execute("CREATE INDEX acceptedanswerid_idx ON questions(acceptedanswerid)")
+
         # create answers table
         cur.execute("CREATE TABLE answers(id int, body string, score int, commentcount int, pid int, acceptedanswer boolean)")
         # add indecies
         cur.execute("CREATE INDEX aid_idx ON answers(id)");
-        cur.execute("CREATE INDEX pid_idx ON answers(id)");
+        cur.execute("CREATE INDEX pid_idx ON answers(pid)");
         cur.execute("CREATE INDEX isacceptedanswer_idx ON answers(acceptedanswer)");
 
         c.commit()
@@ -70,7 +71,6 @@ def create_db(c):
 if __name__=='__main__':
     # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
     static_path = os.getcwd()
-
     users = static_path+'/datasets/Users.xml'
     posts = static_path+'/datasets/Posts.xml'
 
@@ -90,7 +90,7 @@ if __name__=='__main__':
         print("Connecting to DB")
 
     print("Populating DB")
-    fast_iter(context, connection, limit=1000)
+    fast_iter(context, connection, limit=10000)
 
     connection.close()
     del context
