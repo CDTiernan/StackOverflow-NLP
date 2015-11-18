@@ -2,7 +2,7 @@ import sqlite3
 import text_parser
 
 if __name__=='__main__':
-    connection = sqlite3.connect('db/datadump.db')
+    connection = sqlite3.connect('/../db/datadump.db')
 
     cur = connection.cursor()
     cur.execute("SELECT body FROM answers where pid=4")

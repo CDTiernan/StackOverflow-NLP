@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 ''' STATIC PATH FOR DATABASE '''
-DATABASE_PATH = 'db/datadump.db'
+DATABASE_PATH = '../db/datadump.db'
 DATABASE_DIRECTORY = os.getcwd()+'/db'
 
 '''

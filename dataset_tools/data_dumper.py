@@ -53,8 +53,8 @@ def fast_iter(context, c, limit=None):
 if __name__=='__main__':
     # DATASET MUST BE IN SOURCE FOLDER WITHIN A FOLDER CALLED 'datasets'
     static_path = os.getcwd()
-    users = static_path+'/datasets/Users.xml'
-    posts = static_path+'/datasets/Posts.xml'
+    users = static_path+'/../datasets/Users.xml'
+    posts = static_path+'/../datasets/Posts.xml'
 
     # connect to the dataset
     context = etree.iterparse(posts)
