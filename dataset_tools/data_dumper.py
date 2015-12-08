@@ -59,9 +59,13 @@ if __name__=='__main__':
     # connect to the dataset
     context = etree.iterparse(posts)
 
+
     # connect to the database
     print("Connecting to DB")
-    connection = db_tools.get_connection()
+    connection = db_tools.connect()
+    print("Setting up DB (if necessary)")
+    db_tools.setup_db(connection)
+
 
 
 

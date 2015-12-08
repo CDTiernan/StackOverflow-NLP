@@ -13,6 +13,17 @@ def get_connection():
     return setup_db()
 
 '''
+Returns connection to database
+'''
+def connect():
+    # create db folder if there isn't one already
+    if not os.path.exists(DATABASE_DIRECTORY):
+        os.makedirs(DATABASE_DIRECTORY)
+
+    # connect to db (which creates it)
+    return sqlite3.connect(DATABASE_PATH)
+
+'''
 Check database and creates any parts that don't exists
  * Creates folder for database if it doesn't exist
  * Creates database if it doesn't exist
@@ -20,16 +31,8 @@ Check database and creates any parts that don't exists
  * Creates indices for questions table if they don't exist
  * Creates answers table if it doesn't exist
  * Creates indices for answers table if they don't exist
-
-Returns connection to database
 '''
-def setup_db():
-    # create db folder if there isn't one already
-    if not os.path.exists(DATABASE_DIRECTORY):
-        os.makedirs(DATABASE_DIRECTORY)
-
-    # connect to db (which creates it)
-    conn = sqlite3.connect(DATABASE_PATH)
+def setup_db(conn):
     cur = conn.cursor()
 
     # QUESTIONS TABLE
@@ -71,6 +74,13 @@ def setup_db():
 
     conn.commit()
     return conn
+
+def add_column(conn,table,colName,colType):
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT "+colName+" from "+table)
+    except Exception:
+        cur.execute("ALTER TABLE "+table+" ADD COLUMN "+colName+" "+colType)
 
 if __name__=='__main__':
     conn = get_connection()
