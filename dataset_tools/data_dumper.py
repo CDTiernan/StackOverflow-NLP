@@ -66,7 +66,7 @@ if __name__=='__main__':
 
 
     print("Populating DB")
-    fast_iter(context, connection, limit=1)
+    fast_iter(context, connection, limit=10000)
 
     connection.close()
     del context

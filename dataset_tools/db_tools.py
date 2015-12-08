@@ -39,14 +39,18 @@ def setup_db():
                 "title string, " +
                 "body string, " +
                 "score int, " +
-                "views int, " +
-                "favorites int, " +
-                "comments int, " +
-                "acceptedanswerid int, " +
+                "viewcount int, " +
+                "favcount int, " +
+                "commcount int, " +
+                "aaid int, " +
+                "answercount int, " +
+                "creationdate string, " +
+                "lastactivitydate string, " +
+                "tags string, " +
                 "PRIMARY KEY (id))")
     # add indices if they aren't there
     cur.execute("CREATE INDEX IF NOT EXISTS qid_idx ON questions(id)")
-    cur.execute("CREATE INDEX IF NOT EXISTS acceptedanswerid_idx ON questions(acceptedanswerid)")
+    cur.execute("CREATE INDEX IF NOT EXISTS acceptedanswerid_idx ON questions(aaid)")
 
     # ANSWERS TABLE
     # create answers table if it's not there
@@ -54,11 +58,11 @@ def setup_db():
                 "id int, " +
                 "body string, " +
                 "score int, " +
-                "commentcount int, " +
+                "commcount int, " +
                 "pid int, " +
                 "acceptedanswer boolean, " +
-                "lasteditdate string" +
-                "lastmodifydate string" +
+                "creationdate string," +
+                "lastactivitydate string," +
                 "PRIMARY KEY (id))")
     # add indices if they aren't there
     cur.execute("CREATE INDEX IF NOT EXISTS aid_idx ON answers(id)");
