@@ -209,12 +209,13 @@ def diff_times(a,q):
     delta_time = a_time - q_time
     return int(delta_time.total_seconds())
 
+
 if __name__=='__main__':
     # connect to the database
     print("Connecting to DB")
     connection = db_tools.connect()
 
-    print "Removing answers to unstored question"
+    print "Removing answers to unstored questions"
     remove_answers_with_no_question(connection)
 
     print "Getting anchor counts"
