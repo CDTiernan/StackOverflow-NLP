@@ -57,6 +57,8 @@ def setup_db():
                 "commentcount int, " +
                 "pid int, " +
                 "acceptedanswer boolean, " +
+                "lasteditdate string" +
+                "lastmodifydate string" +
                 "PRIMARY KEY (id))")
     # add indices if they aren't there
     cur.execute("CREATE INDEX IF NOT EXISTS aid_idx ON answers(id)");
