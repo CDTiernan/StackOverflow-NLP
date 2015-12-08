@@ -12,7 +12,7 @@ from datetime import datetime
 def remove_questions_with_no_acceptedanswer(c):
      cur = c.cursor()
 
-     cur.execute("DELETE FROM questions WHERE acceptedanswerid IS NULL")
+     cur.execute("DELETE FROM questions WHERE aaid IS NULL")
 
      c.commit()
 
@@ -219,13 +219,14 @@ def diff_times(a,q):
 
 
 if __name__=='__main__':
-
+    db_name = "datadump.db"
     db_path = db_tools.get_db_path()
     dt = datetime.now().isoformat()
-    bckup_path = db_path+"/bckup/"+dt+/"raw_datadump.db"
+    bckup_path = db_path+"/bckup/"+dt
+    os.makedirs(bckup_path)
 
     print("Backing up DB to "+bckup_path)
-    shutil.copyfile(src, bckup_path)
+    shutil.copyfile(db_path+"/"+db_name, bckup_path+"/"+db_name)
 
     # connect to the database
     print("Connecting to DB")

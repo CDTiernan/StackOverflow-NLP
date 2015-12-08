@@ -83,8 +83,9 @@ def add_column(conn,table,colName,colType):
         cur.execute("ALTER TABLE "+table+" ADD COLUMN "+colName+" "+colType)
 
 def get_db_path():
-    return DATABASE_PATH
-    
+    path = DATABASE_PATH[:DATABASE_PATH.rfind('/')]
+    return path
+
 if __name__=='__main__':
     conn = get_connection()
     conn.close()
