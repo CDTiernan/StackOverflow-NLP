@@ -1,11 +1,13 @@
 from collections import defaultdict
 import os
+import shutil
 import sqlite3
 import time
 from datetime import datetime
 import db_tools
 import text_parser
 import sentiment_tools
+from datetime import datetime
 
 def remove_questions_with_no_acceptedanswer(c):
      cur = c.cursor()
@@ -217,6 +219,14 @@ def diff_times(a,q):
 
 
 if __name__=='__main__':
+
+    db_path = db_tools.get_db_path()
+    dt = datetime.now().isoformat()
+    bckup_path = db_path+"/bckup/"+dt+/"raw_datadump.db"
+
+    print("Backing up DB to "+bckup_path)
+    shutil.copyfile(src, bckup_path)
+
     # connect to the database
     print("Connecting to DB")
     connection = db_tools.connect()

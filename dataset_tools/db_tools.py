@@ -82,6 +82,9 @@ def add_column(conn,table,colName,colType):
     except Exception:
         cur.execute("ALTER TABLE "+table+" ADD COLUMN "+colName+" "+colType)
 
+def get_db_path():
+    return DATABASE_PATH
+    
 if __name__=='__main__':
     conn = get_connection()
     conn.close()
