@@ -18,12 +18,19 @@ def get_data():
     x_feats = 7
     y_feats = 1
 
-    build_X = np.ndarray(shape=(2041,x_feats), dtype=float, order='C')
-    build_y = np.ndarray(shape=(2041,), dtype=float, order='C')
-
     connection = db_tools.connect()
     cur = connection.cursor()
 
+    # get number of rows so training array can be built
+    cur.execute("SELECT count(id) FROM answers")
+
+    data = cur.fetchone()
+    num_rows = data[0]
+
+    build_X = np.ndarray(shape=(num_rows,x_feats), dtype=float, order='C')
+    build_y = np.ndarray(shape=(num_rows,), dtype=float, order='C')
+
+    # get all data necessary to train
     cur.execute("SELECT body,score,commcount,bodysentipolarity,bodysentisubjectivity, links, promptness, acceptedanswer FROM answers")
 
     x_indx = 0
@@ -84,7 +91,6 @@ if __name__=='__main__':
     rounds = 20
 
     X, y = get_data()
-    clf = Perceptron()
 
     xx = 1.0 - np.array(heldout)
 
@@ -100,4 +106,4 @@ if __name__=='__main__':
     ]
 
 
-    classify()
+    #classify()
