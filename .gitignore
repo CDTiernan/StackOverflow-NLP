@@ -9,3 +9,6 @@ db/*
 
 # pickle dumps
 *.p
+
+# pngs of data plots
+*.png
