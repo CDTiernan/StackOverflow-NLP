@@ -7,6 +7,12 @@ import db_tools
 import text_parser
 import sentiment_tools
 
+def remove_questions_with_no_acceptedanswer(c):
+     cur = c.cursor()
+
+     cur.execute("DELETE FROM questions WHERE acceptedanswerid IS NULL")
+
+     c.commit()
 
 def remove_answers_with_no_question(c):
     cur = c.cursor()
@@ -214,6 +220,9 @@ if __name__=='__main__':
     # connect to the database
     print("Connecting to DB")
     connection = db_tools.connect()
+
+    print "Removing questions with no acceptedanswer"
+    remove_questions_with_no_acceptedanswer(connection)
 
     print "Removing answers to unstored questions"
     remove_answers_with_no_question(connection)
