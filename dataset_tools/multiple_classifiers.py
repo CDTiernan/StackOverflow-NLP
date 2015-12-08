@@ -69,18 +69,38 @@ def classify():
         yy = []
         for i in heldout:
             yy_ = []
-            for r in range(rounds):
+            yy__ = []
+            for r in range(1):
                 X_train, X_test, y_train, y_test = \
                     train_test_split(X, y, test_size=i, random_state=rng)
                 clf.fit(X_train, y_train)
                 y_pred = clf.predict(X_test)
                 yy_.append(1 - np.mean(y_pred == y_test))
-            yy.append(np.mean(yy_))
+                nright = np.sum(y_pred == y_test)
+                nwrong = np.sum(y_pred != y_test)
+                pright = float(nright/float(nright + nwrong))
+                yy__.append(pright*100)
+
+                i = 0
+                counts = {'fp':0,'tp':0,'fn':0,'tn':0}
+                for pred in y_pred:
+                    if y_pred[i] == 1 and y_test[i] == 0:
+                        counts['fp'] += 1
+                    elif y_pred[i] == 1 and y_test[i] == 1:
+                        counts['tp'] += 1
+                    elif y_pred[i] == 0 and y_test[i] == 1:
+                        counts['fn'] += 1
+                    elif y_pred[i] == 0 and y_test[i] == 0:
+                        counts['tn'] += 1
+                    i += 1
+                print counts
+
+            yy.append(np.mean(yy__))
         plt.plot(xx, yy, label=name)
 
-    plt.legend(loc="upper right")
+    plt.legend(loc="best")
     plt.xlabel("Proportion train")
-    plt.ylabel("Test Error Rate")
+    plt.ylabel("Prec Right")
     # show is broken (and i dont want to deal with setting up the backend, plus having the file is almost better in this case)
     plt.savefig('multplots.png')
 
@@ -106,4 +126,4 @@ if __name__=='__main__':
     ]
 
 
-    #classify()
+    classify()
