@@ -80,19 +80,24 @@ def train_model(t):
     return clf.fit(x_train, y_train)
 
 def test_model(model,t):
-    results = []
+    results = defaultdict(int)
 
+    indx = 0
     for qid, answers in t.iteritems():
         for answer in answers:
             x_test = answer[:len(answer)-1]
             y_test = answer[len(answer)-1:][0]
             p = model.decision_function([x_test])
 
-            results.append((p[0],y_test))
+            if results[qid] == 0:
+                results[qid] = [[p[0],y_test]]
+            else:
+                results[qid].append([p[0],y_test])
 
             #if y_test == 1:
-            print "pred: %d, actual: %i" % (p,y_test)
-        print ""
+            #print "pred: %d, actual: %i" % (p,y_test)
+        #print ""
+        indx += 1
 
     return results
 
@@ -102,25 +107,39 @@ def getKey(item):
 if __name__=='__main__':
     # we create 50 separable points
     master_map = get_data()
-    train_map = {}
-    test_map = {}
 
-    idx = 0
-    for key, val in master_map.iteritems():
-        if idx % 4 == 0:
-            test_map[key] = val
-        else:
-            train_map[key] = val
-        idx += 1
+    avg_indx_array = []
 
-    model = train_model(train_map)
-    results = test_model(model,test_map)
+    for mod in range(2,11):
+        train_map = {}
+        test_map = {}
+
+        idx = 0
+        for key, val in master_map.iteritems():
+            if idx % mod == 0:
+                test_map[key] = val
+            else:
+                train_map[key] = val
+            idx += 1
+
+        model = train_model(train_map)
+        results = test_model(model,test_map)
 
 
-    sorted(results, key=getKey)
+        total = 0.0
+        question_count = 0
+        total_number_answers = 0.0
+        for qid,answers in results.iteritems():
+            answers = sorted(answers, key=getKey, reverse=True)
+            indx = 0
+            question_count += 1
+            for answer in answers:
+                if answer[1] == 1:
+                    total_number_answers += len(answers)
+                    total += indx
+                indx += 1
 
-    indx = 0
-    for result in results:
-        indx += 1
-        print indx
-        print result
+        avg_indx_array.append(float(total/question_count));
+
+    print avg_indx_array
+    print total_number_answers/question_count
